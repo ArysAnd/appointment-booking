@@ -17,6 +17,7 @@ jobs:
   build-and-test:
     name: Build and test
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     services:
       postgres:
@@ -24,7 +25,7 @@ jobs:
         env:
           POSTGRES_DB: appointment_db
           POSTGRES_USER: appointment_user
-          POSTGRES_PASSWORD: appointment_pass
+          POSTGRES_PASSWORD: ${{ secrets.CI_POSTGRES_PASSWORD || 'ci_test_pass' }}
         ports:
           - 5432:5432
         options: >-
@@ -36,8 +37,8 @@ jobs:
     env:
       SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/appointment_db
       SPRING_DATASOURCE_USERNAME: appointment_user
-      SPRING_DATASOURCE_PASSWORD: appointment_pass
-      JWT_SECRET: this-is-a-very-long-secret-key-for-development-only-change-it
+      SPRING_DATASOURCE_PASSWORD: ${{ secrets.CI_POSTGRES_PASSWORD || 'ci_test_pass' }}
+      JWT_SECRET: ${{ secrets.CI_JWT_SECRET || 'ci-only-non-production-key-not-a-real-secret' }}
       JWT_EXPIRATION: 86400000
 
     steps:
