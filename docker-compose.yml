@@ -1,0 +1,29 @@
+services:
+  app:
+    build: .
+    container_name: appointment-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/appointment_db
+      SPRING_DATASOURCE_USERNAME: appointment_user
+      SPRING_DATASOURCE_PASSWORD: appointment_pass
+      JWT_SECRET: this-is-a-very-long-secret-key-for-development-only-change-it
+      JWT_EXPIRATION: 86400000
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: appointment-postgres
+    environment:
+      POSTGRES_DB: appointment_db
+      POSTGRES_USER: appointment_user
+      POSTGRES_PASSWORD: appointment_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - appointment_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  appointment_postgres_data:

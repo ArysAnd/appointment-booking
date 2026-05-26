@@ -1,0 +1,61 @@
+name: Java CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: appointment_db
+          POSTGRES_USER: appointment_user
+          POSTGRES_PASSWORD: appointment_pass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U appointment_user -d appointment_db"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/appointment_db
+      SPRING_DATASOURCE_USERNAME: appointment_user
+      SPRING_DATASOURCE_PASSWORD: appointment_pass
+      JWT_SECRET: this-is-a-very-long-secret-key-for-development-only-change-it
+      JWT_EXPIRATION: 86400000
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Make Maven wrapper executable
+        run: chmod +x mvnw
+
+      - name: Run tests
+        run: ./mvnw clean test
+
+      - name: Build package
+        run: ./mvnw package -DskipTests

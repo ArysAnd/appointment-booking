@@ -1,0 +1,216 @@
+### ============================================================
+### 0. HEALTH CHECK
+### ============================================================
+
+GET http://localhost:8080/api/health
+
+
+### ============================================================
+### 1. AUTH - LOGIN ADMIN
+### ============================================================
+
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "admin123"
+}
+
+
+### After login, copy admin token and paste it below:
+@adminToken = eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3OTgwMzg2NCwiZXhwIjoxNzc5ODkwMjY0fQ.0rvdgNJ_AfIQyuo7RBHJOmvZJ5q7XLKzoNmLEcHJSykh5eE91O35O0d7NX4lu7TQ
+
+
+### ============================================================
+### 2. AUTH - REGISTER CLIENT
+### ============================================================
+
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "fullName": "Test Client",
+  "email": "client2@example.com",
+  "password": "password123"
+}
+
+
+### After register/login, copy client token and paste it below:
+@clientToken = eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJjbGllbnQyQGV4YW1wbGUuY29tIiwicm9sZSI6IkNMSUVOVCIsImlhdCI6MTc3OTgwMzkxOSwiZXhwIjoxNzc5ODkwMzE5fQ.vIpiIyYNBMgeuD6lv5obYjOW-w3yJ-g5WV2RFyUsNYplspRpzt3Ad_tdXeN4liOF
+
+
+### ============================================================
+### 3. AUTH - LOGIN CLIENT
+### ============================================================
+
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "client2@example.com",
+  "password": "password123"
+}
+
+
+### ============================================================
+### 4. ADMIN - CREATE SERVICE
+### ============================================================
+
+POST http://localhost:8080/api/admin/services
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "name": "Initial Consultation",
+  "description": "First consultation with a specialist",
+  "durationMinutes": 30,
+  "price": 50.00
+}
+
+
+### ============================================================
+### 5. PUBLIC - GET ALL SERVICES
+### ============================================================
+
+GET http://localhost:8080/api/services
+
+
+### ============================================================
+### 6. ADMIN - CREATE SPECIALIST
+### ============================================================
+
+POST http://localhost:8080/api/admin/specialists
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "fullName": "Dr. John Smith",
+  "email": "john.smith@example.com",
+  "password": "password123",
+  "specialization": "Cardiology",
+  "serviceIds": [1]
+}
+
+
+### ============================================================
+### 7. PUBLIC - GET ALL SPECIALISTS
+### ============================================================
+
+GET http://localhost:8080/api/specialists
+
+
+### ============================================================
+### 8. ADMIN - CREATE AVAILABILITY SLOT
+### ============================================================
+
+POST http://localhost:8080/api/admin/availability
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "specialistId": 1,
+  "startTime": "2026-06-01T10:00:00",
+  "endTime": "2026-06-01T10:30:00"
+}
+
+
+### ============================================================
+### 9. ADMIN - CREATE SECOND AVAILABILITY SLOT
+### ============================================================
+
+POST http://localhost:8080/api/admin/availability
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "specialistId": 1,
+  "startTime": "2026-06-01T10:30:00",
+  "endTime": "2026-06-01T11:00:00"
+}
+
+
+### ============================================================
+### 10. PUBLIC - GET AVAILABLE SLOTS
+### ============================================================
+
+GET http://localhost:8080/api/availability/specialists/1
+
+
+### ============================================================
+### 11. CLIENT - BOOK APPOINTMENT
+### ============================================================
+
+POST http://localhost:8080/api/appointments
+Content-Type: application/json
+Authorization: Bearer {{clientToken}}
+
+{
+  "serviceId": 1,
+  "specialistId": 1,
+  "slotId": 1
+}
+
+
+### ============================================================
+### 12. CLIENT - GET MY APPOINTMENTS
+### ============================================================
+
+GET http://localhost:8080/api/appointments/my
+Authorization: Bearer {{clientToken}}
+
+
+### ============================================================
+### 13. CLIENT - CANCEL APPOINTMENT
+### ============================================================
+
+PATCH http://localhost:8080/api/appointments/1/cancel
+Authorization: Bearer {{clientToken}}
+
+
+### ============================================================
+### 14. CLIENT - BOOK SAME SLOT AGAIN AFTER CANCELLATION
+### ============================================================
+
+POST http://localhost:8080/api/appointments
+Content-Type: application/json
+Authorization: Bearer {{clientToken}}
+
+{
+  "serviceId": 1,
+  "specialistId": 1,
+  "slotId": 1
+}
+
+
+### ============================================================
+### 15. SPECIALIST - LOGIN SPECIALIST
+### ============================================================
+
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.smith@example.com",
+  "password": "password123"
+}
+
+
+### After login, copy specialist token and paste it below:
+@specialistToken = eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJqb2huLnNtaXRoQGV4YW1wbGUuY29tIiwicm9sZSI6IlNQRUNJQUxJU1QiLCJpYXQiOjE3Nzk4MDQwNDEsImV4cCI6MTc3OTg5MDQ0MX0.Kymk3goZjviZrqLOGVfEGzoC_Uip5busj9vHUkIWeocUPdOLFI3adBMceTnHX_ZB
+
+
+### ============================================================
+### 16. SPECIALIST - GET OWN APPOINTMENTS
+### ============================================================
+
+GET http://localhost:8080/api/specialist/appointments
+Authorization: Bearer {{specialistToken}}
+
+
+### ============================================================
+### 17. ADMIN - GET ALL SLOTS FOR SPECIALIST
+### ============================================================
+
+GET http://localhost:8080/api/admin/availability/specialists/1
+Authorization: Bearer {{adminToken}}

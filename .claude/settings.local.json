@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:search.maven.org)",
+      "WebFetch(domain:repo1.maven.org)",
+      "WebSearch",
+      "Bash(\"C:\\\\Users\\\\merge\\\\.jdks\\\\openjdk-26.0.1\\\\bin\\\\jar.exe\" tf *)",
+      "Bash(\"C:\\\\Users\\\\merge\\\\.jdks\\\\openjdk-26.0.1\\\\bin\\\\jar.exe\" xf *)",
+      "Bash(rm -rf \"C:\\\\Users\\\\merge\\\\OneDrive\\\\Desktop\\\\Projects\\\\appointment-booking\\\\org\" && echo cleaned)",
+      "Bash(export JAVA_HOME=\"C:\\\\Users\\\\merge\\\\.jdks\\\\openjdk-26.0.1\")",
+      "Bash(export PATH=\"/c/Windows/System32/WindowsPowerShell/v1.0:$PATH:/c/Users/merge/.jdks/openjdk-26.0.1/bin\")",
+      "Bash(./mvnw.cmd -B test-compile)",
+      "Bash(./mvnw.cmd -B -Dtest=AppointmentBookingIntegrationTest test)",
+      "Read(//c/Users/merge/.m2/repository/org/springframework/boot/**)",
+      "Read(//c/Users/merge/.m2/repository/org/springframework/boot/spring-boot-resttestclient/4.0.6/**)"
+    ]
+  }
+}
